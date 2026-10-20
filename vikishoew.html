@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="theme-color" content="#f9f4f8">
+	<meta name="description" content="Фан-страница о Viki Show: видео, музыка и фото из архива поклонника.">
+	<title>Viki Show — фан-страница</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+	<style>
+		:root {
+			color-scheme: light;
+			--paper: #f9f4f8;
+			--ink: #24202b;
+			--muted: #766f7c;
+			--blue: #5262db;
+			--pink: #f26caa;
+			--rule: rgba(36, 32, 43, .16);
+			--serif: "Playfair Display", Georgia, serif;
+			--sans: "DM Sans", Arial, sans-serif;
+		}
+		* { box-sizing: border-box; }
+		html { scroll-behavior: smooth; }
+		body {
+			margin: 0;
+			background: radial-gradient(ellipse at 94% 3%, rgba(242, 108, 170, .13), transparent 28%), var(--paper);
+			color: var(--ink);
+			font-family: var(--sans);
+		}
+		.topbar {
+			min-height: 74px;
+			padding: 0 7vw;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-bottom: 1px solid var(--rule);
+		}
+		.brand {
+			color: var(--ink);
+			font-family: var(--serif);
+			font-size: 20px;
+			text-decoration: none;
+		}
+		.brand span { color: var(--blue); }
+		.top-note, .edition {
+			font-size: 9px;
+			font-weight: 600;
+			letter-spacing: 1.8px;
+			text-transform: uppercase;
+		}
+		.top-note { color: var(--muted); }
+		.topbar nav { display: flex; align-items: center; gap: 26px; }
+		.topbar nav a { color: var(--muted); font-size: 9px; letter-spacing: 1.3px; text-decoration: none; text-transform: uppercase; }
+		.topbar nav a:hover { color: var(--blue); }
+		main { max-width: 1440px; margin: auto; }
+		.intro {
+			padding: clamp(58px, 9vw, 120px) 12vw 56px;
+			display: grid;
+			grid-template-columns: 1fr minmax(220px, 340px);
+			align-items: end;
+			gap: 40px;
+		}
+		.intro-copy a { color: var(--blue); font-weight: 700; text-decoration-color: rgba(82, 98, 219, .4); text-underline-offset: 4px; }
+		.edition { display: flex; align-items: center; gap: 11px; color: var(--blue); }
+		.edition::before { width: 24px; height: 1px; background: currentColor; content: ""; }
+		h1 {
+			margin: 22px 0 0 -5px;
+			font-family: var(--serif);
+			font-size: clamp(58px, 9.6vw, 132px);
+			font-weight: 400;
+			line-height: .91;
+			letter-spacing: 0;
+		}
+		h1 span { display: block; }
+		h1 span:last-child { padding-left: .55em; color: var(--pink); }
+		.intro .edition { color: var(--blue); }
+		.section-band { padding: 72px 12vw 82px; background: #eeebfa; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+		.section-head { max-width: 1100px; margin: 0 auto 34px; display: flex; align-items: end; justify-content: space-between; gap: 28px; }
+		.section-kicker { margin: 0 0 12px; color: var(--blue); font-size: 9px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; }
+		h2 { margin: 0; font-family: var(--serif); font-size: clamp(38px, 5vw, 64px); font-weight: 400; line-height: 1; }
+		.section-head > p { max-width: 310px; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
+		.filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 auto 22px; max-width: 1100px; }
+		.filter-button { padding: 10px 15px; border: 1px solid var(--rule); background: transparent; color: var(--ink); font: 600 9px var(--sans); letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: color .2s ease, background .2s ease, border-color .2s ease; }
+		.filter-button:hover, .filter-button[aria-pressed="true"] { border-color: var(--blue); background: var(--blue); color: white; }
+		.video-grid { max-width: 1100px; margin: auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 17px; }
+		.video-card { min-width: 0; background: var(--paper); border: 1px solid rgba(36, 32, 43, .12); animation: arrive .45s both ease; }
+		.video-card[hidden] { display: none; }
+		.video-link { display: block; color: inherit; text-decoration: none; }
+		.video-thumb { aspect-ratio: 16 / 10; position: relative; overflow: hidden; background: #d9d5e8; }
+		.video-thumb img { width: 100%; height: 100%; display: block; object-fit: cover; transition: transform .45s ease; }
+		.video-link:hover .video-thumb img { transform: scale(1.04); }
+		.play-mark { position: absolute; left: 50%; top: 50%; width: 48px; height: 48px; display: grid; place-items: center; transform: translate(-50%, -50%); border: 1px solid rgba(255,255,255,.8); border-radius: 50%; background: rgba(36,32,43,.4); color: white; font-size: 17px; backdrop-filter: blur(5px); }
+		.video-info { padding: 17px 17px 19px; }
+		.video-tag { color: var(--blue); font-size: 8px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; }
+		.video-info h3 { margin: 9px 0 0; font-family: var(--serif); font-size: 19px; font-weight: 500; line-height: 1.24; }
+		.photo-card figcaption span:last-child { color: var(--blue); }
+		.intro-copy {
+			margin: 0 0 7px;
+			max-width: 290px;
+			color: var(--muted);
+			font-size: 13px;
+			line-height: 1.8;
+		}
+		.gallery {
+			padding: 0 12vw 95px;
+			display: grid;
+			grid-template-columns: 1.12fr .88fr;
+			align-items: start;
+			gap: clamp(20px, 4vw, 58px);
+		}
+		.photo-card { margin: 0; min-width: 0; }
+		.photo-card:nth-child(2) { margin-top: 95px; }
+		.photo-button {
+			width: 100%;
+			padding: 0;
+			display: block;
+			position: relative;
+			overflow: hidden;
+			border: 0;
+			background: #dedbd3;
+			cursor: zoom-in;
+			text-align: left;
+		}
+		.photo-button::after {
+			position: absolute;
+			inset: 0;
+			border: 1px solid rgba(32, 33, 31, .08);
+			content: "";
+			pointer-events: none;
+		}
+		.photo-button img {
+			width: 100%;
+			display: block;
+			object-fit: cover;
+			transition: transform .7s cubic-bezier(.2,.7,.2,1), filter .45s ease;
+		}
+		.photo-card:first-child img { aspect-ratio: 4 / 5; }
+		.photo-card:nth-child(2) img { aspect-ratio: 4 / 5.4; }
+		.photo-button:hover img { transform: scale(1.035); filter: saturate(1.08); }
+		.photo-number {
+			position: absolute;
+			right: 15px;
+			bottom: 14px;
+			z-index: 1;
+			width: 34px;
+			height: 34px;
+			display: grid;
+			place-items: center;
+			border: 1px solid rgba(255,255,255,.7);
+			border-radius: 50%;
+			color: white;
+			font-size: 11px;
+			backdrop-filter: blur(6px);
+		}
+		figcaption {
+			padding-top: 15px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 12px;
+			border-top: 1px solid var(--rule);
+			margin-top: 13px;
+			color: var(--muted);
+			font-size: 9px;
+			letter-spacing: 1.4px;
+			text-transform: uppercase;
+		}
+		figcaption span:last-child { color: var(--ink); }
+		.footer {
+			min-height: 76px;
+			padding: 20px 7vw;
+			border-top: 1px solid var(--rule);
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 16px;
+			color: var(--muted);
+			font-size: 9px;
+			letter-spacing: 1.3px;
+			text-transform: uppercase;
+		}
+		.footer span:last-child { color: var(--blue); }
+		.lightbox {
+			width: 100%;
+			max-width: none;
+			max-height: none;
+			padding: 28px;
+			border: 0;
+			background: rgba(19, 20, 22, .96);
+			color: white;
+			inset: 0;
+			margin: 0;
+		}
+		.lightbox[open] { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; }
+		.lightbox::backdrop { background: rgba(14, 15, 17, .94); }
+		.lightbox-head, .lightbox-controls { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+		.lightbox-head { color: rgba(255,255,255,.7); font-size: 10px; letter-spacing: 1.7px; text-transform: uppercase; }
+		.icon-button {
+			width: 44px;
+			height: 44px;
+			border: 1px solid rgba(255,255,255,.3);
+			border-radius: 50%;
+			background: transparent;
+			color: white;
+			font: 24px var(--sans);
+			cursor: pointer;
+			transition: background .2s ease, border-color .2s ease;
+		}
+		.icon-button:hover { border-color: white; background: rgba(255,255,255,.12); }
+		.lightbox-image-wrap { min-height: 0; display: grid; place-items: center; padding: 18px 0; }
+		.lightbox-image { max-width: 100%; max-height: calc(100svh - 160px); object-fit: contain; }
+		.lightbox-controls { justify-content: center; color: rgba(255,255,255,.7); font-size: 10px; letter-spacing: 1.5px; }
+		.lightbox-controls button { margin: 0 12px; }
+		@keyframes arrive { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+		.intro > *, .photo-card { animation: arrive .8s both cubic-bezier(.2,.7,.2,1); }
+		.intro-copy { animation-delay: .12s; }
+		.photo-card:nth-child(2) { animation-delay: .16s; }
+		@media (max-width: 700px) {
+			.topbar { min-height: 62px; padding: 0 7vw; }
+			.top-note { font-size: 8px; letter-spacing: 1px; }
+			.topbar nav { gap: 11px; }
+			.topbar nav a { font-size: 8px; letter-spacing: .7px; }
+			.intro { padding: 68px 8vw 38px; grid-template-columns: 1fr; gap: 24px; }
+			h1 { font-size: clamp(66px, 17vw, 104px); }
+			.intro-copy { max-width: 340px; font-size: 12px; }
+			.gallery { padding: 0 8vw 68px; grid-template-columns: 1fr; gap: 43px; }
+			.section-band { padding: 58px 8vw 66px; }
+			.section-head { display: block; }
+			.section-head > p { margin-top: 17px; }
+			.video-grid { grid-template-columns: 1fr; gap: 13px; }
+			.video-card { display: grid; grid-template-columns: minmax(120px, .82fr) 1fr; align-items: stretch; }
+			.video-thumb { height: 100%; min-height: 120px; aspect-ratio: auto; }
+			.video-info { display: flex; flex-direction: column; justify-content: center; padding: 13px; }
+			.video-info h3 { font-size: 17px; }
+			.photo-card:nth-child(2) { margin-top: 0; }
+			.photo-card:first-child img, .photo-card:nth-child(2) img { aspect-ratio: 4 / 5; }
+			.footer { padding: 18px 7vw; font-size: 8px; }
+			.lightbox { padding: 16px; }
+			.lightbox-image { max-height: calc(100svh - 145px); }
+		}
+		@media (prefers-reduced-motion: reduce) {
+			*, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+		}
+	</style>
+</head>
+<body>
+	<header class="topbar">
+		<a class="brand" href="#top" aria-label="Viki Show, на главную">VIKI<span>.</span></a>
+		<nav aria-label="Навигация по странице">
+			<a href="#videos">Видео</a>
+			<a href="#photos">Фото</a>
+		</nav>
+		<a class="top-note" href="https://www.youtube.com/@VikiShow" target="_blank" rel="noreferrer">YouTube ↗</a>
+	</header>
+	<main id="top">
+		<section class="intro" aria-labelledby="page-title">
+			<div>
+				<p class="edition">Фан-страница · Viki Show</p>
+				<h1 id="page-title"><span>Viki</span><span>Show</span></h1>
+			</div>
+			<p class="intro-copy">Влоги, челленджи, музыка и большие приключения. Загляни в мир Вики, а потом выбери, что посмотреть первым. <a href="https://www.youtube.com/@VikiShow" target="_blank" rel="noreferrer">Официальный канал ↗</a></p>
+		</section>
+		<section class="section-band" id="videos" aria-labelledby="videos-title">
+			<div class="section-head">
+				<div><p class="section-kicker">Смотри и выбирай</p><h2 id="videos-title">Что включить?</h2></div>
+				<p>Свежие выпуски и музыка с канала Viki Show. Нажми на видео, чтобы открыть его на YouTube.</p>
+			</div>
+			<div class="filters" role="group" aria-label="Фильтр видео">
+				<button class="filter-button" type="button" data-filter="all" aria-pressed="true">Все</button>
+				<button class="filter-button" type="button" data-filter="vlog" aria-pressed="false">Влоги</button>
+				<button class="filter-button" type="button" data-filter="fun" aria-pressed="false">Пранки и истории</button>
+				<button class="filter-button" type="button" data-filter="music" aria-pressed="false">Музыка</button>
+			</div>
+			<div class="video-grid">
+				<article class="video-card" data-category="vlog">
+					<a class="video-link" href="https://www.youtube.com/watch?v=-lAKDiEtEek" target="_blank" rel="noreferrer">
+						<div class="video-thumb"><img src="https://i.ytimg.com/vi/-lAKDiEtEek/hqdefault.jpg" alt="Обложка видео про 24 часа в Абу-Даби" loading="lazy"><span class="play-mark" aria-hidden="true">▶</span></div>
+						<div class="video-info"><span class="video-tag">Влог · Абу-Даби</span><h3>24 часа: соседний столик выбирает, что я буду есть</h3></div>
+					</a>
+				</article>
+				<article class="video-card" data-category="vlog">
+					<a class="video-link" href="https://www.youtube.com/watch?v=EGc221xm9ms" target="_blank" rel="noreferrer">
+						<div class="video-thumb"><img src="https://i.ytimg.com/vi/EGc221xm9ms/hqdefault.jpg" alt="Обложка тревел-влога из Абу-Даби" loading="lazy"><span class="play-mark" aria-hidden="true">▶</span></div>
+						<div class="video-info"><span class="video-tag">Влог · Приключение</span><h3>Мы попали в будущее? Самое странное место в Абу-Даби</h3></div>
+					</a>
+				</article>
+				<article class="video-card" data-category="fun">
+					<a class="video-link" href="https://www.youtube.com/watch?v=S1rXenOfK9I" target="_blank" rel="noreferrer">
+						<div class="video-thumb"><img src="https://i.ytimg.com/vi/S1rXenOfK9I/hqdefault.jpg" alt="Обложка видео Стала трудным подростком" loading="lazy"><span class="play-mark" aria-hidden="true">▶</span></div>
+						<div class="video-info"><span class="video-tag">История · Пранк</span><h3>Стала трудным подростком</h3></div>
+					</a>
+				</article>
+				<article class="video-card" data-category="music">
+					<a class="video-link" href="https://www.youtube.com/watch?v=WqfF-_ubzu4" target="_blank" rel="noreferrer">
+						<div class="video-thumb"><img src="https://i.ytimg.com/vi/WqfF-_ubzu4/hqdefault.jpg" alt="Обложка клипа Ваушная" loading="lazy"><span class="play-mark" aria-hidden="true">▶</span></div>
+						<div class="video-info"><span class="video-tag">Музыка · Клип</span><h3>«Ваушная» — премьера клипа</h3></div>
+					</a>
+				</article>
+			</div>
+		</section>
+		<section class="gallery" id="photos" aria-label="Фотоальбом">
+			<figure class="photo-card">
+				<button class="photo-button" type="button" data-photo="0" aria-label="Открыть фотографию 1 на весь экран">
+					<img src="3aeac8b5934a1cafb27cacd38e185d3d.jpg" alt="Вика на вечерней прогулке у бассейна">
+					<span class="photo-number" aria-hidden="true">↗</span>
+				</button>
+				<figcaption><span>01 / Вечер</span><span>Фотоальбом</span></figcaption>
+			</figure>
+			<figure class="photo-card">
+				<button class="photo-button" type="button" data-photo="1" aria-label="Открыть фотографию 2 на весь экран">
+					<img src="3b8e13bfbd60ed84e8c483c2bba315e1.jpg" alt="Вика на прогулке у Исаакиевского собора">
+					<span class="photo-number" aria-hidden="true">↗</span>
+				</button>
+				<figcaption><span>02 / Полдень</span><span>Фотоальбом</span></figcaption>
+			</figure>
+		</section>
+	</main>
+	<footer class="footer"><span>Фан-страница · Не официальный сайт</span><span><a href="https://www.youtube.com/@VikiShow" target="_blank" rel="noreferrer">Канал Viki Show ↗</a></span></footer>
+	<dialog class="lightbox" aria-label="Просмотр фотографий">
+		<div class="lightbox-head"><span id="lightbox-index">Кадр 01 / 02</span><button class="icon-button" type="button" data-close aria-label="Закрыть просмотр">×</button></div>
+		<div class="lightbox-image-wrap"><img class="lightbox-image" alt=""></div>
+		<div class="lightbox-controls">
+			<button class="icon-button" type="button" data-prev aria-label="Предыдущая фотография">‹</button>
+			<span>Листайте фотографии</span>
+			<button class="icon-button" type="button" data-next aria-label="Следующая фотография">›</button>
+		</div>
+	</dialog>
+	<script>
+		const photos = [...document.querySelectorAll(".photo-button img")];
+		const lightbox = document.querySelector(".lightbox");
+		const lightboxImage = document.querySelector(".lightbox-image");
+		const lightboxIndex = document.querySelector("#lightbox-index");
+		let activePhoto = 0;
+
+		function showPhoto(index) {
+			activePhoto = (index + photos.length) % photos.length;
+			lightboxImage.src = photos[activePhoto].src;
+			lightboxImage.alt = photos[activePhoto].alt;
+			lightboxIndex.textContent = `Кадр ${String(activePhoto + 1).padStart(2, "0")} / ${String(photos.length).padStart(2, "0")}`;
+		}
+
+		document.querySelectorAll(".photo-button").forEach(button => {
+			button.addEventListener("click", () => {
+				showPhoto(Number(button.dataset.photo));
+				lightbox.showModal();
+			});
+		});
+		document.querySelector("[data-close]").addEventListener("click", () => lightbox.close());
+		document.querySelector("[data-prev]").addEventListener("click", () => showPhoto(activePhoto - 1));
+		document.querySelector("[data-next]").addEventListener("click", () => showPhoto(activePhoto + 1));
+		lightbox.addEventListener("click", event => {
+			if (event.target === lightbox) lightbox.close();
+		});
+		lightbox.addEventListener("keydown", event => {
+			if (event.key === "ArrowRight") showPhoto(activePhoto + 1);
+			if (event.key === "ArrowLeft") showPhoto(activePhoto - 1);
+		});
+		window.addEventListener("keydown", event => {
+			if (event.key === "Escape" && lightbox.open) lightbox.close();
+		});
+		document.querySelectorAll(".filter-button").forEach(button => {
+			button.addEventListener("click", () => {
+				const filter = button.dataset.filter;
+				document.querySelectorAll(".filter-button").forEach(item => {
+					item.setAttribute("aria-pressed", String(item === button));
+				});
+				document.querySelectorAll(".video-card").forEach(card => {
+					card.hidden = filter !== "all" && card.dataset.category !== filter;
+				});
+			});
+		});
+	</script>
+</body>
+</html>
